@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Ganadera</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #f0f0f0, #d9d9d9);
+            color: #333;
+        }
+        .screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .hidden { display: none; }
+        h1, h2 { margin-bottom: 20px; }
+        input {
+            font-size: 1.2em;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            width: 250px;
+        }
+        .animal-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px;
+        }
+        .animal-buttons button {
+            width: 150px;
+            height: 100px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .animal-buttons button:hover {
+            transform: scale(1.05);
+            background-color: #cfcfcf;
+        }
+        button {
+            font-size: 1.2em;
+            padding: 15px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #bfbfbf;
+            color: #000;
+        }
+        #contacto {
+            background-color: #25D366;
+            color: white;
+            font-weight: bold;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 1.3em;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 15px;
+            border-radius: 10px;
+            width: 80%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla de inicio de sesión -->
+    <div id="login-screen" class="screen">
+        <h1>Inicio de Sesión</h1>
+        <input type="text" id="username" placeholder="Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="login()">Ingresar</button>
+        <button onclick="register()">Registrarse</button>
+    </div>
+
+    <!-- Pantalla principal -->
+    <div id="main-screen" class="screen hidden">
+        <h1>Calculadora Ganadera</h1>
+        <p>Seleccione el animal:</p>
+        <div class="animal-buttons">
+            <button onclick="seleccionarAnimal('cerdo')">Cerdo</button>
+            <button onclick="seleccionarAnimal('vaca')">Vaca</button>
+            <button onclick="seleccionarAnimal('gallina')">Gallina</button>
+            <button onclick="seleccionarAnimal('caballo')">Caballo</button>
+            <button onclick="seleccionarAnimal('oveja')">Oveja</button>
+        </div>
+
+        <!-- Formulario dinámico -->
+        <div id="form-animal" class="hidden">
+            <h2 id="animal-titulo"></h2>
+            <input type="number" id="cantidad" placeholder="Cantidad de animales">
+            <input type="number" id="precio" placeholder="Precio por kilo/unidad">
+            <input type="number" id="gastos" placeholder="Gastos mensuales">
+            <button onclick="calcular()">Calcular</button>
+        </div>
+
+        <div id="resultado"></div>
+
+        <!-- Botón de contacto -->
+        <a href="https://wa.me/573001112233" target="_blank">
+            <button id="contacto">Contacto por WhatsApp</button>
+        </a>
+    </div>
+
+    <script>
+        let usuarios = {};
+        let animalSeleccionado = "";
+
+        function login() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if (usuarios[user] && usuarios[user] === pass) {
+                alert("Bienvenido " + user);
+                mostrarCalculadora();
+            } else {
+                alert("Usuario o contraseña incorrectos.");
+            }
+        }
+
+        function register() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if (user && pass) {
+                if (!usuarios[user]) {
+                    usuarios[user] = pass;
+                    alert("Usuario registrado con éxito.");
+                } else {
+                    alert("El usuario ya existe.");
+                }
+            } else {
+                alert("Debe ingresar usuario y contraseña.");
+            }
+        }
+
+        function mostrarCalculadora() {
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("main-screen").classList.remove("hidden");
+        }
+
+        function seleccionarAnimal(animal) {
+            animalSeleccionado = animal;
+            document.getElementById("form-animal").classList.remove("hidden");
+            document.getElementById("animal-titulo").innerText = "Cálculo para " + animal;
+        }
+
+        function calcular() {
+            const cantidad = parseInt(document.getElementById("cantidad").value);
+            const precio = parseFloat(document.getElementById("precio").value);
+            const gastos = parseFloat(document.getElementById("gastos").value);
+
+            if (isNaN(cantidad) || isNaN(precio) || isNaN(gastos)) {
+                alert("Debe ingresar todos los valores numéricos.");
+                return;
+            }
+
+            let resultado = "";
+
+            switch (animalSeleccionado) {
+                case "cerdo":
+                    resultado = `${cantidad} cerdos producen ${cantidad * 80} kg de carne. 
+                                 Gastos mensuales: $${cantidad * gastos}. 
+                                 Ingreso potencial: $${cantidad * 80 * precio}.`;
+                    break;
+                case "vaca":
+                    resultado = `${cantidad} vacas producen ${cantidad * 20} litros de leche diarios. 
+                                 Gastos mensuales: $${cantidad * gastos}. 
+                                 Ingreso potencial: $${cantidad * 20 * precio * 30}.`;
+                    break;
+                case "gallina":
+                    resultado = `${cantidad} gallinas producen ${cantidad * 25} huevos mensuales. 
+                                 Gastos mensuales: $${cantidad * gastos}. 
+                                 Ingreso potencial: $${cantidad * 25 * precio}.`;
+                    break;
+                case "caballo":
+                    resultado = `${cantidad} caballos producen ${cantidad * 100} kg de carne. 
+                                 Gastos mensuales: $${cantidad * gastos}. 
+                                 Ingreso potencial: $${cantidad * 100 * precio}.`;
+                    break;
+                case "oveja":
+                    resultado = `${cantidad} ovejas producen ${cantidad * 5} kg de lana mensuales. 
+                                 Gastos mensuales: $${cantidad * gastos}. 
+                                 Ingreso potencial: $${cantidad * 5 * precio}.`;
+                    break;
+                default:
+                    resultado = "Animal no reconocido.";
+            }
+
+            document.getElementById("resultado").innerText = resultado;
+        }
+    </script>
+</body>
+</html>
